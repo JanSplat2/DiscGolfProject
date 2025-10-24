@@ -134,21 +134,17 @@ struct ContentView: View {
             Annotation("Tee 12", coordinate: tee12) {
                 teeMarker
             }
-            Annotation("Tee 13", coordinate: tee14) {
+            Annotation("Tee 13", coordinate: tee13) {
+                teeMarker
+            }
+            Annotation("Tee 14", coordinate: tee14) {
                 teeMarker
             }
             Annotation("Tee 15", coordinate: tee15) {
                 teeMarker
             }
             Annotation("Tee 16", coordinate: tee16) {
-                ZStack{
-                    Image(systemName: "rectangle.fill")
-                        .foregroundColor(.white)
-                        .font(.system(size: 30))
-                    Image(systemName: "rectangle")
-                        .foregroundColor(.blue)
-                        .font(.system(size: 30))
-                }
+                teeMarker
             }
             Annotation("Tee 17", coordinate: tee17) {
                 teeMarker
