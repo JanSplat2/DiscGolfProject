@@ -7,6 +7,7 @@
 
 import SwiftUI
 import MapKit
+import CoreLocation
 
 struct ContentView: View {
     
@@ -86,290 +87,155 @@ struct ContentView: View {
     
     var tee18 = CLLocationCoordinate2D(latitude: 40.558345, longitude: -105.139454)
     
-    //MARK: - User vars
-    
-    
-    // MARK: - Other vars
-    
+    // MARK: - States
     @State private var camera: MapCameraPosition = .automatic
+    @State private var selectedHole: Int? = nil
+    @State private var scores: [Int?] = Array(repeating: nil, count: 18)
     
+    // MARK: - Body
     var body: some View {
-        Map(position: $camera) {
-            
-            //MARK: Tees
-            
-            Annotation("Tee 1", coordinate: tee1) {
-                teeMarker
-            }
-            Annotation("Tee 2", coordinate: tee2) {
-                teeMarker
-            }
-            Annotation("Tee 3", coordinate: tee3) {
-                teeMarker
-            }
-            Annotation("Tee 4", coordinate: tee4) {
-                teeMarker
-            }
-            Annotation("Tee 5", coordinate: tee5) {
-                teeMarker
-            }
-            Annotation("Tee 6", coordinate: tee6) {
-                teeMarker
-            }
-            Annotation("Tee 7", coordinate: tee7) {
-                teeMarker
-            }
-            Annotation("Tee 8", coordinate: tee8) {
-                teeMarker
-            }
-            Annotation("Tee 9", coordinate: tee9) {
-                teeMarker
-            }
-            Annotation("Tee 10", coordinate: tee10) {
-                teeMarker
-            }
-            Annotation("Tee 11", coordinate: tee11) {
-                teeMarker
-            }
-            Annotation("Tee 12", coordinate: tee12) {
-                teeMarker
-            }
-            Annotation("Tee 13", coordinate: tee13) {
-                teeMarker
-            }
-            Annotation("Tee 14", coordinate: tee14) {
-                teeMarker
-            }
-            Annotation("Tee 15", coordinate: tee15) {
-                teeMarker
-            }
-            Annotation("Tee 16", coordinate: tee16) {
-                teeMarker
-            }
-            Annotation("Tee 17", coordinate: tee17) {
-                teeMarker
-            }
-            Annotation("Tee 18", coordinate: tee18) {
-                teeMarker
-            }
-            
-            //MARK: - Holes
-            
-            Annotation("Hole 1", coordinate: hole1) {
-                holeMarker
-            }
-            Annotation("Hole 2", coordinate: hole2) {
-                holeMarker
-            }
-            Annotation("Hole 3", coordinate: hole3) {
-                holeMarker
-            }
-            Annotation("Hole 4", coordinate: hole4) {
-                holeMarker
-            }
-            Annotation("Hole 5", coordinate: hole5) {
-                holeMarker
-            }
-            Annotation("Hole 6", coordinate: hole6) {
-                holeMarker
-            }
-            Annotation("Hole 7", coordinate: hole7) {
-                holeMarker
-            }
-            Annotation("Hole 8", coordinate: hole8) {
-                holeMarker
-            }
-            Annotation("Hole 9", coordinate: hole9) {
-                holeMarker
-            }
-            Annotation("Hole 10", coordinate: hole10) {
-                holeMarker
-            }
-            Annotation("Hole 11", coordinate: hole11) {
-                holeMarker
-            }
-            Annotation("Hole 12", coordinate: hole12) {
-                holeMarker
-            }
-            Annotation("Hole 13", coordinate: hole13) {
-                holeMarker
-            }
-            Annotation("Hole 14", coordinate: hole14) {
-                holeMarker
-            }
-            Annotation("Hole 15", coordinate: hole15) {
-                holeMarker
-            }
-            Annotation("Hole 16", coordinate: hole16) {
-                holeMarker
-            }
-            Annotation("Hole 17", coordinate: hole17) {
-                holeMarker
-            }
-            Annotation("Hole 18", coordinate: hole18) {
-                holeMarker
-            }
-            
-            //MARK: - Lines to connect
-            MapPolyline(coordinates: [tee1, hole1])
-                .stroke(.blue, lineWidth: 4)
-            MapPolyline(coordinates: [tee2, hole2])
-                .stroke(.blue, lineWidth: 4)
-            MapPolyline(coordinates: [tee3, hole3])
-                .stroke(.blue, lineWidth: 4)
-            MapPolyline(coordinates: [tee4, hole4])
-                .stroke(.blue, lineWidth: 4)
-            MapPolyline(coordinates: [tee5, hole5])
-                .stroke(.blue, lineWidth: 4)
-            MapPolyline(coordinates: [tee6, hole6])
-                .stroke(.blue, lineWidth: 4)
-            MapPolyline(coordinates: [tee7, hole7])
-                .stroke(.blue, lineWidth: 4)
-            MapPolyline(coordinates: [tee8, hole8])
-                .stroke(.blue, lineWidth: 4)
-            MapPolyline(coordinates: [tee9, hole9])
-                .stroke(.blue, lineWidth: 4)
-            MapPolyline(coordinates: [tee10, hole10])
-                .stroke(.blue, lineWidth: 4)
-            MapPolyline(coordinates: [tee11, hole11])
-                .stroke(.blue, lineWidth: 4)
-            MapPolyline(coordinates: [tee12, hole12])
-                .stroke(.blue, lineWidth: 4)
-            MapPolyline(coordinates: [tee13, hole13])
-                .stroke(.blue, lineWidth: 4)
-            MapPolyline(coordinates: [tee14, hole14])
-                .stroke(.blue, lineWidth: 4)
-            MapPolyline(coordinates: [tee15, hole15])
-                .stroke(.blue, lineWidth: 4)
-            MapPolyline(coordinates: [tee16, hole16])
-                .stroke(.blue, lineWidth: 4)
-            MapPolyline(coordinates: [tee17, hole17])
-                .stroke(.blue, lineWidth: 4)
-            MapPolyline(coordinates: [tee18, hole18])
-                .stroke(.blue, lineWidth: 4)
-        }
-        .mapStyle(.hybrid)
-        //MARK: - Buttons
-        .safeAreaInset(edge: .bottom) {
-            ScrollView(.horizontal){
-                HStack{
-                    Button {
-                        camera = .region(MKCoordinateRegion(center: tee1, latitudinalMeters: 100, longitudinalMeters: 100))
-                    } label: {
-                        Text("Course 1")
+        ZStack {
+            Map(position: $camera) {
+                //MARK: - Tee markers
+                ForEach(1...18, id: \.self) { i in
+                    let tee = getTee(for: i)
+                    let hole = getHole(for: i)
+                    Annotation("Tee \(i)", coordinate: tee) {
+                        teeMarker
                     }
-                    Button {
-                        camera = .region(MKCoordinateRegion(center: tee2, latitudinalMeters: 100, longitudinalMeters: 100))
-                    } label: {
-                        Text("Course 2")
+                    Annotation("Hole \(i)", coordinate: hole) {
+                        holeMarker
                     }
-                    Button {
-                        camera = .region(MKCoordinateRegion(center: tee3, latitudinalMeters: 100, longitudinalMeters: 100))
-                    } label: {
-                        Text("Course 3")
-                    }
-                    Button {
-                        camera = .region(MKCoordinateRegion(center: tee4, latitudinalMeters: 100, longitudinalMeters: 100))
-                    } label: {
-                        Text("Course 4")
-                    }
-                    Button {
-                        camera = .region(MKCoordinateRegion(center: tee5, latitudinalMeters: 100, longitudinalMeters: 100))
-                    } label: {
-                        Text("Course 5")
-                    }
-                    Button {
-                        camera = .region(MKCoordinateRegion(center: tee6, latitudinalMeters: 100, longitudinalMeters: 100))
-                    } label: {
-                        Text("Course 6")
-                    }
-                    Button {
-                        camera = .region(MKCoordinateRegion(center: tee7, latitudinalMeters: 100, longitudinalMeters: 100))
-                    } label: {
-                        Text("Course 7")
-                    }
-                    Button {
-                        camera = .region(MKCoordinateRegion(center: tee8, latitudinalMeters: 100, longitudinalMeters: 100))
-                    } label: {
-                        Text("Course 8")
-                    }
-                    Button {
-                        camera = .region(MKCoordinateRegion(center: tee9, latitudinalMeters: 100, longitudinalMeters: 100))
-                    } label: {
-                        Text("Course 9")
-                    }
-                    Button {
-                        camera = .region(MKCoordinateRegion(center: tee10, latitudinalMeters: 100, longitudinalMeters: 100))
-                    } label: {
-                        Text("Course 10")
-                    }
-                    Button {
-                        camera = .region(MKCoordinateRegion(center: tee11, latitudinalMeters: 100, longitudinalMeters: 100))
-                    } label: {
-                        Text("Course 11")
-                    }
-                    Button {
-                        camera = .region(MKCoordinateRegion(center: tee12, latitudinalMeters: 100, longitudinalMeters: 100))
-                    } label: {
-                        Text("Course 12")
-                    }
-                    Button {
-                        camera = .region(MKCoordinateRegion(center: tee13, latitudinalMeters: 100, longitudinalMeters: 100))
-                    } label: {
-                        Text("Course 13")
-                    }
-                    Button {
-                        camera = .region(MKCoordinateRegion(center: tee14, latitudinalMeters: 100, longitudinalMeters: 100))
-                    } label: {
-                        Text("Course 14")
-                    }
-                    Button {
-                        camera = .region(MKCoordinateRegion(center: tee15, latitudinalMeters: 100, longitudinalMeters: 100))
-                    } label: {
-                        Text("Course 15")
-                    }
-                    Button {
-                        camera = .region(MKCoordinateRegion(center: tee16, latitudinalMeters: 100, longitudinalMeters: 100))
-                    } label: {
-                        Text("Course 16")
-                    }
-                    Button {
-                        camera = .region(MKCoordinateRegion(center: tee17, latitudinalMeters: 100, longitudinalMeters: 100))
-                    } label: {
-                        Text("Course 17")
-                    }
-                    Button {
-                        camera = .region(MKCoordinateRegion(center: tee18, latitudinalMeters: 100, longitudinalMeters: 100))
-                    } label: {
-                        Text("Course 18")
-                    }
+                    MapPolyline(coordinates: [tee, hole])
+                        .stroke(.blue, lineWidth: 4)
                 }
             }
-            .padding()
-            .background(.thinMaterial)
+            .mapStyle(.hybrid)
+            .ignoresSafeArea()
+            
+            //MARK: - Hole info panel
+            if let holeNumber = selectedHole {
+                let tee = getTee(for: holeNumber)
+                let basket = getHole(for: holeNumber)
+                let distance = calculateDistance(from: tee, to: basket)
+                
+                VStack(spacing: 16) {
+                    Text("Hole \(holeNumber)")
+                        .font(.largeTitle.bold())
+                    Text("Par: 3")
+                        .font(.title2)
+                    Text("Distance: \(String(format: "%.1f", distance)) m")
+                        .font(.title3)
+                    
+                    HStack {
+                        Text("Your Score:")
+                        TextField("Enter", value: Binding(
+                            get: { scores[holeNumber - 1] },
+                            set: { scores[holeNumber - 1] = $0 }),
+                                  format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .keyboardType(.numberPad)
+                        .frame(width: 80)
+                    }
+                    .padding(.bottom)
+                    
+                    Button("Close") {
+                        selectedHole = nil
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+                .padding()
+                .frame(width: 400)
+                .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+                .shadow(radius: 10)
+                .transition(.scale)
+            }
+        }
+
+        .safeAreaInset(edge: .bottom) {
+            ScrollView(.horizontal) {
+                HStack(spacing: 16) {
+                    ForEach(1...18, id: \.self) { i in
+                        Button {
+                            selectedHole = i
+                            camera = .region(MKCoordinateRegion(
+                                center: getTee(for: i),
+                                latitudinalMeters: 150,
+                                longitudinalMeters: 150))
+                        } label: {
+                            Text("Hole \(i)")
+                                .padding()
+                                .background(.thinMaterial)
+                                .clipShape(Capsule())
+                        }
+                    }
+                    if let total = totalScore() {
+                        Text("Total: \(total)")
+                            .font(.title3.bold())
+                            .padding(.leading)
+                    }
+                }
+                .padding()
+            }
+            .background(.regularMaterial)
         }
     }
+    
+    // MARK: - Helpers
+    private func getTee(for hole: Int) -> CLLocationCoordinate2D {
+        switch hole {
+        case 1: return tee1; case 2: return tee2; case 3: return tee3; case 4: return tee4
+        case 5: return tee5; case 6: return tee6; case 7: return tee7; case 8: return tee8
+        case 9: return tee9; case 10: return tee10; case 11: return tee11; case 12: return tee12
+        case 13: return tee13; case 14: return tee14; case 15: return tee15; case 16: return tee16
+        case 17: return tee17; case 18: return tee18
+        default: return tee1
+        }
+    }
+    
+    private func getHole(for hole: Int) -> CLLocationCoordinate2D {
+        switch hole {
+        case 1: return hole1; case 2: return hole2; case 3: return hole3; case 4: return hole4
+        case 5: return hole5; case 6: return hole6; case 7: return hole7; case 8: return hole8
+        case 9: return hole9; case 10: return hole10; case 11: return hole11; case 12: return hole12
+        case 13: return hole13; case 14: return hole14; case 15: return hole15; case 16: return hole16
+        case 17: return hole17; case 18: return hole18
+        default: return hole1
+        }
+    }
+    
+    private func calculateDistance(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D) -> Double {
+        let loc1 = CLLocation(latitude: from.latitude, longitude: from.longitude)
+        let loc2 = CLLocation(latitude: to.latitude, longitude: to.longitude)
+        return loc1.distance(from: loc2)
+    }
+    
+    private func totalScore() -> Int? {
+        let validScores = scores.compactMap { $0 }
+        guard !validScores.isEmpty else { return nil }
+        return validScores.reduce(0, +)
+    }
+    
     // MARK: - Marker Styles
     private var teeMarker: some View {
         ZStack {
             Image(systemName: "rectangle.fill")
                 .foregroundColor(.white)
-                .font(.system(size: 30))
             Image(systemName: "rectangle")
                 .foregroundColor(.blue)
-                .font(.system(size: 30))
         }
+        .font(.system(size: 30))
     }
     
     private var holeMarker: some View {
         ZStack {
             Image(systemName: "circle.fill")
                 .foregroundStyle(.blue)
-                .font(.system(size: 30))
             Image(systemName: "target")
                 .foregroundStyle(.white)
-                .font(.system(size: 30))
         }
+        .font(.system(size: 30))
     }
 }
 
