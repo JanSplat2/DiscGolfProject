@@ -94,7 +94,7 @@ struct ContentView: View {
     @State private var camera: MapCameraPosition = .automatic
     
     var body: some View {
-        Map() {
+        Map(position: $camera) {
             
             //MARK: Tees
             
@@ -249,6 +249,105 @@ struct ContentView: View {
                 .stroke(.blue, lineWidth: 4)
         }
         .mapStyle(.hybrid)
+        //MARK: - Buttons
+        .safeAreaInset(edge: .bottom) {
+            ScrollView(.horizontal){
+                HStack{
+                    Button {
+                        camera = .region(MKCoordinateRegion(center: tee1, latitudinalMeters: 100, longitudinalMeters: 100))
+                    } label: {
+                        Text("Course 1")
+                    }
+                    Button {
+                        camera = .region(MKCoordinateRegion(center: tee2, latitudinalMeters: 100, longitudinalMeters: 100))
+                    } label: {
+                        Text("Course 2")
+                    }
+                    Button {
+                        camera = .region(MKCoordinateRegion(center: tee3, latitudinalMeters: 100, longitudinalMeters: 100))
+                    } label: {
+                        Text("Course 3")
+                    }
+                    Button {
+                        camera = .region(MKCoordinateRegion(center: tee4, latitudinalMeters: 100, longitudinalMeters: 100))
+                    } label: {
+                        Text("Course 4")
+                    }
+                    Button {
+                        camera = .region(MKCoordinateRegion(center: tee5, latitudinalMeters: 100, longitudinalMeters: 100))
+                    } label: {
+                        Text("Course 5")
+                    }
+                    Button {
+                        camera = .region(MKCoordinateRegion(center: tee6, latitudinalMeters: 100, longitudinalMeters: 100))
+                    } label: {
+                        Text("Course 6")
+                    }
+                    Button {
+                        camera = .region(MKCoordinateRegion(center: tee7, latitudinalMeters: 100, longitudinalMeters: 100))
+                    } label: {
+                        Text("Course 7")
+                    }
+                    Button {
+                        camera = .region(MKCoordinateRegion(center: tee8, latitudinalMeters: 100, longitudinalMeters: 100))
+                    } label: {
+                        Text("Course 8")
+                    }
+                    Button {
+                        camera = .region(MKCoordinateRegion(center: tee9, latitudinalMeters: 100, longitudinalMeters: 100))
+                    } label: {
+                        Text("Course 9")
+                    }
+                    Button {
+                        camera = .region(MKCoordinateRegion(center: tee10, latitudinalMeters: 100, longitudinalMeters: 100))
+                    } label: {
+                        Text("Course 10")
+                    }
+                    Button {
+                        camera = .region(MKCoordinateRegion(center: tee11, latitudinalMeters: 100, longitudinalMeters: 100))
+                    } label: {
+                        Text("Course 11")
+                    }
+                    Button {
+                        camera = .region(MKCoordinateRegion(center: tee12, latitudinalMeters: 100, longitudinalMeters: 100))
+                    } label: {
+                        Text("Course 12")
+                    }
+                    Button {
+                        camera = .region(MKCoordinateRegion(center: tee13, latitudinalMeters: 100, longitudinalMeters: 100))
+                    } label: {
+                        Text("Course 13")
+                    }
+                    Button {
+                        camera = .region(MKCoordinateRegion(center: tee14, latitudinalMeters: 100, longitudinalMeters: 100))
+                    } label: {
+                        Text("Course 14")
+                    }
+                    Button {
+                        camera = .region(MKCoordinateRegion(center: tee15, latitudinalMeters: 100, longitudinalMeters: 100))
+                    } label: {
+                        Text("Course 15")
+                    }
+                    Button {
+                        camera = .region(MKCoordinateRegion(center: tee16, latitudinalMeters: 100, longitudinalMeters: 100))
+                    } label: {
+                        Text("Course 16")
+                    }
+                    Button {
+                        camera = .region(MKCoordinateRegion(center: tee17, latitudinalMeters: 100, longitudinalMeters: 100))
+                    } label: {
+                        Text("Course 17")
+                    }
+                    Button {
+                        camera = .region(MKCoordinateRegion(center: tee18, latitudinalMeters: 100, longitudinalMeters: 100))
+                    } label: {
+                        Text("Course 18")
+                    }
+                }
+            }
+            .padding()
+            .background(.thinMaterial)
+        }
     }
     // MARK: - Marker Styles
     private var teeMarker: some View {
