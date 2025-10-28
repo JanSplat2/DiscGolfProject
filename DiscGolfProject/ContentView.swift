@@ -14,171 +14,160 @@ struct ContentView: View {
     // MARK: - Holes var
     
     var hole1 = CLLocationCoordinate2D(latitude: 40.5565559, longitude: -105.1379600)
-    
     var hole2 = CLLocationCoordinate2D(latitude: 40.5569357, longitude: -105.1367495)
-    
     var hole3 = CLLocationCoordinate2D(latitude: 40.5570549, longitude: -105.1347512)
-    
     var hole4 = CLLocationCoordinate2D(latitude: 40.55746, longitude: -105.13697)
-    
     var hole5 = CLLocationCoordinate2D(latitude: 40.55788, longitude: -105.13545)
-    
     var hole6 = CLLocationCoordinate2D(latitude: 40.55753, longitude: -105.13420)
-    
     var hole7 = CLLocationCoordinate2D(latitude: 40.55838, longitude: -105.13588)
-    
     var hole8 = CLLocationCoordinate2D(latitude: 40.55845, longitude: -105.13754)
-    
     var hole9 = CLLocationCoordinate2D(latitude: 40.55858, longitude: -105.13565)
-    
     var hole10 = CLLocationCoordinate2D(latitude: 40.558763, longitude:  -105.134242)
-    
     var hole11 = CLLocationCoordinate2D(latitude: 40.559135, longitude: -105.134385)
-    
     var hole12 = CLLocationCoordinate2D(latitude: 40.559030, longitude: -105.135471)
-    
     var hole13 = CLLocationCoordinate2D(latitude: 40.559783, longitude: -105.135804)
-    
     var hole14 = CLLocationCoordinate2D(latitude: 40.560467, longitude: -105.134485)
-    
     var hole15 = CLLocationCoordinate2D(latitude: 40.560337, longitude: -105.136424)
-    
     var hole16 = CLLocationCoordinate2D(latitude: 40.559436, longitude: -105.137056)
-    
     var hole17 = CLLocationCoordinate2D(latitude: 40.558592, longitude: -105.139183)
-    
     var hole18 = CLLocationCoordinate2D(latitude: 40.557291, longitude: -105.139472)
     
     // MARK: - Tees var
     
     var tee1 = CLLocationCoordinate2D(latitude: 40.5564509, longitude: -105.1390831)
-    
     var tee2 = CLLocationCoordinate2D(latitude: 40.5566772, longitude: -105.1375496)
-    
     var tee3 = CLLocationCoordinate2D(latitude: 40.557197, longitude: -105.1357486)
-    
     var tee4 = CLLocationCoordinate2D(latitude: 40.55753, longitude: -105.13584)
-    
     var tee5 = CLLocationCoordinate2D(latitude: 40.55776, longitude: -105.13708)
-    
     var tee6 = CLLocationCoordinate2D(latitude: 40.55770, longitude: -105.13526)
-    
     var tee7 = CLLocationCoordinate2D(latitude: 40.55781, longitude: -105.13455)
-    
     var tee8 = CLLocationCoordinate2D(latitude: 40.55834, longitude: -105.13627)
-    
     var tee9 = CLLocationCoordinate2D(latitude: 40.55882, longitude: -105.13707)
-    
     var tee10 = CLLocationCoordinate2D(latitude: 40.558376, longitude: -105.135466)
-    
     var tee11 = CLLocationCoordinate2D(latitude: 40.558885, longitude: -105.134107)
-    
     var tee12 = CLLocationCoordinate2D(latitude: 40.559379, longitude: -105.134151)
-    
     var tee13 = CLLocationCoordinate2D(latitude: 40.558914, longitude: -105.135949)
-    
     var tee14 = CLLocationCoordinate2D(latitude: 40.559697, longitude: -105.135522)
-    
     var tee15 = CLLocationCoordinate2D(latitude: 40.560616, longitude: -105.134974)
-    
     var tee16 = CLLocationCoordinate2D(latitude: 40.560543, longitude: -105.136820)
-    
     var tee17 = CLLocationCoordinate2D(latitude: 40.558889, longitude: -105.137061)
-    
     var tee18 = CLLocationCoordinate2D(latitude: 40.558345, longitude: -105.139454)
     
     // MARK: - States
     @State private var camera: MapCameraPosition = .automatic
     @State private var selectedHole: Int? = nil
     @State private var scores: [Int?] = Array(repeating: nil, count: 18)
+    @State private var showFlowerView = false   
     
     // MARK: - Body
     var body: some View {
-        ZStack {
-            Map(position: $camera) {
-                //MARK: - Tee markers
-                ForEach(1...18, id: \.self) { i in
-                    let tee = getTee(for: i)
-                    let hole = getHole(for: i)
-                    Annotation("Tee \(i)", coordinate: tee) {
-                        teeMarker
-                    }
-                    Annotation("Hole \(i)", coordinate: hole) {
-                        holeMarker
-                    }
-                    MapPolyline(coordinates: [tee, hole])
-                        .stroke(.blue, lineWidth: 4)
-                }
-            }
-            .mapStyle(.hybrid)
-            .ignoresSafeArea()
-            
-            //MARK: - Hole info panel
-            if let holeNumber = selectedHole {
-                let tee = getTee(for: holeNumber)
-                let basket = getHole(for: holeNumber)
-                let distance = calculateDistance(from: tee, to: basket)
-                
-                VStack(spacing: 16) {
-                    Text("Hole \(holeNumber)")
-                        .font(.largeTitle.bold())
-                    Text("Par: 3")
-                        .font(.title2)
-                    Text("Distance: \(String(format: "%.1f", distance)) m")
-                        .font(.title3)
-                    
-                    HStack {
-                        Text("Your Score:")
-                        TextField("Enter", value: Binding(
-                            get: { scores[holeNumber - 1] },
-                            set: { scores[holeNumber - 1] = $0 }),
-                                  format: .number)
-                        .textFieldStyle(.roundedBorder)
-                        .keyboardType(.numberPad)
-                        .frame(width: 80)
-                    }
-                    .padding(.bottom)
-                    
-                    Button("Close") {
-                        selectedHole = nil
-                    }
-                    .buttonStyle(.borderedProminent)
-                }
-                .padding()
-                .frame(width: 400)
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 20))
-                .shadow(radius: 10)
-                .transition(.scale)
-            }
-        }
-
-        .safeAreaInset(edge: .bottom) {
-            ScrollView(.horizontal) {
-                HStack(spacing: 16) {
+        NavigationStack {
+            ZStack {
+                Map(position: $camera) {
                     ForEach(1...18, id: \.self) { i in
-                        Button {
-                            selectedHole = i
-                            camera = .region(MKCoordinateRegion(
-                                center: getTee(for: i),
-                                latitudinalMeters: 150,
-                                longitudinalMeters: 150))
-                        } label: {
-                            Text("Hole \(i)")
-                                .padding()
-                                .background(.thinMaterial)
+                        let tee = getTee(for: i)
+                        let hole = getHole(for: i)
+                        Annotation("Tee \(i)", coordinate: tee) { teeMarker }
+                        Annotation("Hole \(i)", coordinate: hole) { holeMarker }
+                        MapPolyline(coordinates: [tee, hole])
+                            .stroke(.blue, lineWidth: 4)
+                    }
+                }
+                .mapStyle(.hybrid)
+                .ignoresSafeArea()
+                
+                // Hole Info Sheet
+                if let holeNumber = selectedHole {
+                    let tee = getTee(for: holeNumber)
+                    let basket = getHole(for: holeNumber)
+                    let distance = calculateDistance(from: tee, to: basket)
+                    let par = 3
+                    
+                    VStack(spacing: 16) {
+                        Text("Hole \(holeNumber)")
+                            .font(.largeTitle.bold())
+                        Text("Par: \(par)")
+                            .font(.title2)
+                        Text("Distance: \(String(format: "%.1f", distance)) ft")
+                            .font(.title3)
+                        
+                        HStack {
+                            Text("Your Score:")
+                            TextField("Enter", value: Binding(
+                                get: { scores[holeNumber - 1] },
+                                set: { scores[holeNumber - 1] = $0 }),
+                                      format: .number)
+                            .textFieldStyle(.roundedBorder)
+                            .keyboardType(.numberPad)
+                            .frame(width: 80)
+                            
+                            if let score = scores[holeNumber - 1] {
+                                let color = scoreColor(for: score, par: par)
+                                Circle()
+                                    .fill(color)
+                                    .frame(width: 20, height: 20)
+                                    .overlay(Circle().stroke(.black, lineWidth: 1))
+                                    .padding(.leading, 8)
+                            }
+                        }
+                        .padding(.bottom)
+                        
+                        Button("Close") {
+                            selectedHole = nil
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
+                    .padding()
+                    .frame(width: 400)
+                    .background(.ultraThinMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .shadow(radius: 10)
+                    .transition(.scale)
+                }
+            }
+            
+            //MARK: - Bottom toolbar
+            .safeAreaInset(edge: .bottom) {
+                ScrollView(.horizontal) {
+                    HStack(spacing: 16) {
+                        ForEach(1...18, id: \.self) { i in
+                            Button {
+                                selectedHole = i
+                                camera = .region(MKCoordinateRegion(
+                                    center: getTee(for: i),
+                                    latitudinalMeters: 150,
+                                    longitudinalMeters: 150))
+                            } label: {
+                                Text("Hole \(i)")
+                                    .padding()
+                                    .background(.thinMaterial)
+                                    .clipShape(Capsule())
+                            }
+                        }
+                        
+                        if let total = totalScore() {
+                            Text("Total: \(total)")
+                                .font(.title3.bold())
+                                .padding(.leading)
+                        }
+                        
+                        //MARK: RAGE BUTTON
+                        NavigationLink(destination: FlowerDemoView()) {
+                            Text("💢 Rage")
+                                .font(.title3.bold())
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 10)
+                                .background(.red.gradient)
+                                .foregroundColor(.white)
                                 .clipShape(Capsule())
+                                .shadow(radius: 5)
                         }
                     }
-                    if let total = totalScore() {
-                        Text("Total: \(total)")
-                            .font(.title3.bold())
-                            .padding(.leading)
-                    }
+                    .padding()
                 }
-                .padding()
+                .background(.regularMaterial)
             }
-            .background(.regularMaterial)
+            .navigationTitle("Disc Golf Map")
         }
     }
     
@@ -208,7 +197,8 @@ struct ContentView: View {
     private func calculateDistance(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D) -> Double {
         let loc1 = CLLocation(latitude: from.latitude, longitude: from.longitude)
         let loc2 = CLLocation(latitude: to.latitude, longitude: to.longitude)
-        return loc1.distance(from: loc2)
+        let distanceInMeters = loc1.distance(from: loc2)
+        return distanceInMeters * 3.28084 // convert to feet
     }
     
     private func totalScore() -> Int? {
@@ -217,7 +207,12 @@ struct ContentView: View {
         return validScores.reduce(0, +)
     }
     
-    // MARK: - Marker Styles
+    private func scoreColor(for score: Int, par: Int) -> Color {
+        if score < par { return .green }
+        else if score == par { return .blue }
+        else { return .red }
+    }
+    
     private var teeMarker: some View {
         ZStack {
             Image(systemName: "rectangle.fill")
